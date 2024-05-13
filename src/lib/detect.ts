@@ -2,16 +2,16 @@
  * @Author: kasuie
  * @Date: 2024-05-07 13:51:39
  * @LastEditors: kasuie
- * @LastEditTime: 2024-05-08 11:20:17
+ * @LastEditTime: 2024-05-13 19:51:50
  * @Description:
  */
 
 export const analyzeLog = (content: Array<any>) => {
-  const ipRequest: any = [];
+  const ipRequest: any = []
   // 存储 IP 地址和请求计数的映射
-  const ipRequestCount: any = {};
+  const ipRequestCount: any = {}
 
-  let logs = "";
+  let logs = ''
 
   // 遍历日志行数组
   content.forEach((log) => {
@@ -25,14 +25,14 @@ export const analyzeLog = (content: Array<any>) => {
         ipRequestCount[ip] = 1
       } else {
         ipRequestCount[ip]++
-        if (ipRequestCount[ip] > 100) {
+        if (ipRequestCount[ip] >= 100) {
+          logs = logs + logLine + '\n'
           ipRequest.push({
             ip,
             type: 1,
             desc: `可能是来自${ip}的DDOS攻击`,
             content: logLine
           })
-          logs = logs + logLine + "\n";
         }
       }
       // 检测端口扫描
@@ -43,7 +43,7 @@ export const analyzeLog = (content: Array<any>) => {
           desc: `可能是来自${ip}的端口扫描`,
           content: logLine
         })
-        logs = logs + logLine + "\n";
+        logs = logs + logLine + '\n'
       }
 
       // 检测 Webshell 攻击
@@ -59,7 +59,7 @@ export const analyzeLog = (content: Array<any>) => {
           desc: `可能是来自${ip}的Webshell攻击`,
           content: logLine
         })
-        logs = logs + logLine + "\n";
+        logs = logs + logLine + '\n'
       }
 
       //检测蚁剑
@@ -73,7 +73,7 @@ export const analyzeLog = (content: Array<any>) => {
           desc: `可能是来自${ip}的蚁剑payload`,
           content: logLine
         })
-        logs = logs + logLine + "\n";
+        logs = logs + logLine + '\n'
       }
 
       //检测菜刀
@@ -88,7 +88,7 @@ export const analyzeLog = (content: Array<any>) => {
           desc: `可能是来自${ip}的蚁剑payload`,
           content: logLine
         })
-        logs = logs + logLine + "\n";
+        logs = logs + logLine + '\n'
       }
 
       //检测冰蝎
@@ -103,7 +103,7 @@ export const analyzeLog = (content: Array<any>) => {
           desc: `可能是来自${ip}的冰蝎payload`,
           content: logLine
         })
-        logs = logs + logLine + "\n";
+        logs = logs + logLine + '\n'
       }
 
       //检测SQL注入
@@ -120,7 +120,7 @@ export const analyzeLog = (content: Array<any>) => {
           desc: `可能是来自${ip}的SQL 注入攻击`,
           content: logLine
         })
-        logs = logs + logLine + "\n";
+        logs = logs + logLine + '\n'
       }
     })
   })

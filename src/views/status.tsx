@@ -2,7 +2,7 @@
  * @Author: kasuie
  * @Date: 2024-05-06 15:29:16
  * @LastEditors: kasuie
- * @LastEditTime: 2024-05-08 10:57:57
+ * @LastEditTime: 2024-05-13 21:22:58
  * @Description:
  */
 import { analyzeLog } from '@/lib/detect'
@@ -14,6 +14,7 @@ export default defineComponent({
   setup() {
     const result = ref()
     const logs = ref()
+    const total = ref()
     const statistic = ref([
       { text: 'DDOS攻击', value: 0 },
       { text: '端口扫描', value: 0 },
@@ -21,6 +22,14 @@ export default defineComponent({
       { text: '蚁剑payload', value: 0 },
       { text: '冰蝎payload', value: 0 },
       { text: 'SQL 注入攻击', value: 0 }
+    ])
+    const temps: any = ref([
+      { ips: [] },
+      { ips: [] },
+      { ips: [] },
+      { ips: [] },
+      { ips: [] },
+      { ips: [] }
     ])
 
     const getData = () => {
@@ -35,20 +44,54 @@ export default defineComponent({
       const data = await getData()
       const { ipRequest, logs: log } = analyzeLog(data)
       ipRequest.map((v: any) => {
-        ++statistic.value[v.type - 1].value
+        if (!temps.value[v.type - 1].ips.includes(v.ip)) {
+          temps.value[v.type - 1].ips.push(v.ip)
+          ++statistic.value[v.type - 1].value
+        }
       })
       result.value = ipRequest
       logs.value = log
+      total.value = log
     })
+
+    const onFilter = (key: number) => {
+      let newLogs: string = 'null'
+      if (statistic.value[key].value) {
+        result.value?.map((v: any) => {
+          if (v.type - 1 === key) {
+            newLogs = newLogs + v.logLine + '\n'
+          }
+        })
+      }
+      logs.value = newLogs
+    }
+
+    const renderLogView = () => {
+      return <LogView value={logs.value} />
+    }
 
     return () => (
       <div class="w-full h-full">
         <div class="flex gap-24 mb-8">
-          {statistic.value.map((v: any) => {
-            return <a-statistic title={v.text} value={v.value} />
+          {statistic.value.map((v: any, i: number) => {
+            return (
+              <a-statistic
+                v-slots={{
+                  formatter: ({ value }: { value: number }) => {
+                    return (
+                      <span class="underline cursor-pointer" onClick={() => onFilter(i)}>
+                        {value}
+                      </span>
+                    )
+                  }
+                }}
+                title={v.text}
+                value={v.value}
+              />
+            )
           })}
         </div>
-        <LogView value={logs.value} />
+        {renderLogView()}
       </div>
     )
   }

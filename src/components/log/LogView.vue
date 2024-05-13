@@ -2,12 +2,12 @@
  * @Author: kasuie
  * @Date: 2024-05-06 16:40:39
  * @LastEditors: kasuie
- * @LastEditTime: 2024-05-09 10:48:13
+ * @LastEditTime: 2024-05-13 21:24:36
  * @Description: 
 -->
 <script setup lang="ts">
 import * as monaco from 'monaco-editor'
-import { ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import request from '@/lib/fetch'
 
 const props = defineProps<{
@@ -17,16 +17,25 @@ const props = defineProps<{
 
 const LogRef: any = ref()
 
+const config = reactive({
+  value: props.value,
+  language: 'shell',
+  theme: 'vs-dark',
+  readOnly: true,
+  links: true, // 是否点击链接
+  minimap: {
+    enabled: false
+  }
+})
+
 watch(
   () => props.url,
   (val) => {
     if (val) {
       request.get(`/spi/${val}`, {}, { text: true }).then((res: any) => {
         monaco.editor.create(LogRef.value, {
-          value: res,
-          language: 'shell',
-          theme: 'vs-dark',
-          readOnly: true
+          ...config,
+          value: res
         })
       })
     }
@@ -41,10 +50,8 @@ watch(
   (val) => {
     if (val) {
       monaco.editor.create(LogRef.value, {
-        value: val,
-        language: 'shell',
-        theme: 'vs-dark',
-        readOnly: true
+        ...config,
+        value: val
       })
     }
   },

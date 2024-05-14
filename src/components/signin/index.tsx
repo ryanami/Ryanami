@@ -2,7 +2,7 @@
  * @Author: kasuie
  * @Date: 2024-04-02 14:05:51
  * @LastEditors: kasuie
- * @LastEditTime: 2024-05-12 20:01:24
+ * @LastEditTime: 2024-05-14 15:25:13
  * @Description:
  */
 import { defineComponent, onMounted, reactive, ref } from 'vue'
@@ -58,10 +58,12 @@ export default defineComponent({
 
     return () => (
       <div class="h-full w-full flex items-center justify-center bg-[#f5f5f5]">
-        <div class="flex flex-nowrap p-4 w-1/4 bg-white rounded">
+        <div class="flex flex-nowrap p-4 w-1/4 h-80 bg-white rounded">
           {/* <signin-scan /> */}
           <div class="flex-1">
-            <a-tabs v-model={activeKey} class="min-w-80">
+            <a-tabs tabBarStyle={{
+              marginBottom: "36px"
+            }} v-model={activeKey} class="min-w-80">
               <a-tab-pane key="1" tab="密码登录">
                 <a-form
                   model={formState}
